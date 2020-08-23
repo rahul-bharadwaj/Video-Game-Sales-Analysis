@@ -1,0 +1,104 @@
+---
+title: "Video Game Sales"
+author: "Rahul Bharadwaj Mysore Venkatesh"
+date: "23/08/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message = FALSE,
+                      warning = FALSE,
+                      fig.pos = 'H',
+                      fig.align = 'center')
+```
+
+* We first load the libraries required for our analysis.
+```{r Library}
+#loading libraries
+library(tidyverse)
+library(visdat)
+library(kableExtra)
+```
+
+* We now read our data into R environment from a [source file](https://www.kaggle.com/gregorut/videogamesales)
+
+```{r ReadData}
+#reading video games sales data from csv file
+vgsales <- read.csv("vgsales.csv")
+#displaying dimensions of data and sample observations
+glimpse(vgsales)
+```
+
+## Initial Data Analysis:
+
+* Initial Data Analysis is a process which helps one get a feel of the data in question. This helps us have an overview of the data and gives insights about potential Exlporatory Data Analyis (EDA).
+
+* Initial data analysis is the process of data inspection steps to be carried out after the research plan and data collection have been finished but before formal statistical analyses. The purpose is to minimize the risk of incorrect or misleading results. [Link for more info](https://www.sciencedirect.com/science/article/pii/S0022522315017948#:~:text=Initial%20data%20analysis%20is%20the,of%20incorrect%20or%20misleading%20results.)
+
+* IDA can be divided into 3 main steps:
+  + Data cleaning is the identification of inconsistencies in the data and the resolution of any such issues.
+  + Data screening is the description of the data properties.
+  + Documentation and reporting preserve the information for the later statistical analysis and models.
+  
+### visdat
+
+1. The visdat package in R helps us get a visual overview of the data in the form of plots. The vis_dat() function helps us get a glimpse of the data types for all variables in our dataset.
+
+```{r visdat, fig.cap='Visulaization of Data Types of the data', fig.height = 2, fig.width = 4}
+#Initial Data Analysis to get a feel of the dataset
+visdat::vis_dat(vgsales)
+```
+* We can observe that there are only three Types of data in our dataset viz, character, integer, and numeric. This makes it pretty straightforward and simple to conduct analysis.
+
+### visguess
+
+2. The vis_guess() function tries to predict the kind of data in each cell of our dataset.
+
+```{r visguess, fig.cap='Data Type for each cell in dataset', fig.height = 3, fig.width = 4}
+#cell data type guess
+visdat::vis_guess(vgsales)
+```
+  
+* We can thus oobserve the following from the dataset.
+  + Rank is integer Type.
+  + Name is character Type.
+  + Platform is character Type with an exception of one cell value which might have an integer.
+  + Year is integer Type with some excpetion that might look like character.
+  + Genre and Publisher are character Type.
+  + The rest of the sales variables are either integer or double.  
+* Note that this is a cell-wise interpretation and the actual data will have only one type for one column.
+
+### vismiss
+
+3. The vis_miss() function give an overall visual of the missing data in our data set.
+
+```{r vismiss, fig.cap='Missing Values Plot', fig.height = 5, fig.width = 5}
+#NA or missing values viz
+visdat::vis_miss(vgsales)
+```
+  
+* We can observe that there is no missing values in our data. Present 100% indicates the same. This means we do not have to deal with missing values.
+
+### viscor
+
+4. The vis_cor() function gives us a visual plot of the correlation between variables in our dataset. An important thing to note here is that it takes only numeric variables. We have already established this, thanks to vis_dat(). So we select only the numeric columns for this function.
+
+```{r viscor, fig.cap='Correlation Plot for variables', fig.height = 3, fig.width = 5}
+#visual correlation for numerical variables
+visdat::vis_cor(vgsales[7:11])
+```
+* The above figure shows correlation as a range between +1.0 and -1.0 for the different variables.
+
+### gathercor
+
+5. The gather_cor() function gives us the exact values for the same instead of a range.
+```{r gathercor, fig.cap='Correlation between variables'}
+#tabular correlation for numerical variables
+visdat::gather_cor(vgsales[7:11]) %>% filter(row_1 == "Global_Sales") %>% head(5) %>%
+  kable() %>% kable_styling(full_width = FALSE)
+```
+
+* The above table shows the exact correlations between the variables in our dataset. This sample table is filtered to show the correlation between Global Sales and Sales in each major locations of the world.
