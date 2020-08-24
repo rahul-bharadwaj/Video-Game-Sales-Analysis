@@ -3,8 +3,8 @@ title: "Video Game Sales"
 author: "Rahul Bharadwaj Mysore Venkatesh"
 date: "23/08/2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -102,3 +102,8 @@ visdat::gather_cor(vgsales[7:11]) %>% filter(row_1 == "Global_Sales") %>% head(5
 ```
 
 * The above table shows the exact correlations between the variables in our dataset. This sample table is filtered to show the correlation between Global Sales and Sales in each major locations of the world.
+
+## Exploratory Data Analysis
+
+* In statistics, exploratory data analysis is an approach to analyzing data sets to summarize their main characteristics, often with visual methods. A statistical model can be used or not, but primarily EDA is for seeing what the data can tell us beyond the formal modeling or hypothesis testing task [(Wikipedia)](https://en.wikipedia.org/wiki/Exploratory_data_analysis)
+
