@@ -3,8 +3,8 @@ title: "Video Game Sales"
 author: "Rahul Bharadwaj Mysore Venkatesh"
 date: "23/08/2020"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -21,6 +21,7 @@ knitr::opts_chunk$set(echo = TRUE,
 library(tidyverse)
 library(visdat)
 library(kableExtra)
+library(ggpubr)
 ```
 
 * We now read our data into R environment from a [source file](https://www.kaggle.com/gregorut/videogamesales)
@@ -103,7 +104,50 @@ visdat::gather_cor(vgsales[7:11]) %>% filter(row_1 == "Global_Sales") %>% head(5
 
 * The above table shows the exact correlations between the variables in our dataset. This sample table is filtered to show the correlation between Global Sales and Sales in each major locations of the world.
 
-## Exploratory Data Analysis
+<\newpage>
+
+## Exploratory Data Analysis:
 
 * In statistics, exploratory data analysis is an approach to analyzing data sets to summarize their main characteristics, often with visual methods. A statistical model can be used or not, but primarily EDA is for seeing what the data can tell us beyond the formal modeling or hypothesis testing task [(Wikipedia)](https://en.wikipedia.org/wiki/Exploratory_data_analysis)
+
+Example Code:
+GTA <- vgsales %>% filter(str_detect(vgsales$Name, "Grand Theft Auto")) %>% 
+  ggplot(aes(x = reorder(Platform, -Global_Sales), y = Global_Sales, fill = Platform)) +
+  geom_bar(stat = "identity", show.legend = FALSE) + xlab("Platform") + ylab("Global Sales") +
+  ggtitle("Grand Theft Auto: All-Time Sales") + coord_flip()
+
+```{r AllTimeSales, fig.cap='All Time Global Sales (millions)', echo=FALSE}
+GTA <- vgsales %>% filter(str_detect(vgsales$Name, "Grand Theft Auto")) %>% 
+  ggplot(aes(x = reorder(Platform, -Global_Sales), y = Global_Sales, fill = Platform)) +
+  geom_bar(stat = "identity", show.legend = FALSE) + xlab("Platform") + ylab("Global Sales") +
+  ggtitle("Grand Theft Auto") + coord_flip()
+
+FIFA <- vgsales %>% filter(str_detect(vgsales$Name, "FIFA")) %>% 
+  ggplot(aes(x = reorder(Platform, -Global_Sales), y = Global_Sales, fill = Platform)) +
+  geom_bar(stat = "identity", show.legend = FALSE) + xlab("Platform") + ylab("Global Sales") +
+  ggtitle("FIFA") + coord_flip()
+
+Pokemon <- vgsales %>% filter(str_detect(vgsales$Name, "Pokemon")) %>% 
+  ggplot(aes(x = reorder(Platform, -Global_Sales), y = Global_Sales, fill = Platform)) +
+  geom_bar(stat = "identity", show.legend = FALSE) + xlab("Platform") + ylab("Global Sales") +
+  ggtitle("Pokemon") + coord_flip()
+
+Mario <- vgsales %>% filter(str_detect(vgsales$Name, "Mario")) %>% 
+  ggplot(aes(x = reorder(Platform, -Global_Sales), y = Global_Sales, fill = Platform)) +
+  geom_bar(stat = "identity", show.legend = FALSE) + xlab("Platform") + ylab("Global Sales") +
+  ggtitle("Mario") + coord_flip()
+
+NFS <- vgsales %>% filter(str_detect(vgsales$Name, c("Need for", "Need For"))) %>% 
+  ggplot(aes(x = reorder(Platform, -Global_Sales), y = Global_Sales, fill = Platform)) +
+  geom_bar(stat = "identity", show.legend = FALSE) + xlab("Platform") + ylab("Global Sales") +
+  ggtitle("Need For Speed") + coord_flip()
+
+COD <- vgsales %>% filter(str_detect(vgsales$Name, c("Call of", "Call Of"))) %>% 
+  ggplot(aes(x = reorder(Platform, -Global_Sales), y = Global_Sales, fill = Platform)) +
+  geom_bar(stat = "identity", show.legend = FALSE) + xlab("Platform") + ylab("Global Sales") +
+  ggtitle("Call Of Duty") + coord_flip()
+
+ggarrange(GTA, FIFA, Pokemon, Mario, NFS, COD)
+```
+
 
