@@ -3,8 +3,8 @@ title: "Video Game Sales"
 author: "Rahul Bharadwaj Mysore Venkatesh"
 date: "23/08/2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -104,7 +104,7 @@ visdat::gather_cor(vgsales[7:11]) %>% filter(row_1 == "Global_Sales") %>% head(5
 
 * The above table shows the exact correlations between the variables in our dataset. This sample table is filtered to show the correlation between Global Sales and Sales in each major locations of the world.
 
-<\newpage>
+\newpage
 
 ## Exploratory Data Analysis:
 
@@ -116,7 +116,7 @@ GTA <- vgsales %>% filter(str_detect(vgsales$Name, "Grand Theft Auto")) %>%
   geom_bar(stat = "identity", show.legend = FALSE) + xlab("Platform") + ylab("Global Sales") +
   ggtitle("Grand Theft Auto: All-Time Sales") + coord_flip()
 
-```{r AllTimeSales, fig.cap='All Time Global Sales (millions)', echo=FALSE}
+```{r AllTimeSales, fig.cap='All Time Global Sales (millions)'}
 GTA <- vgsales %>% filter(str_detect(vgsales$Name, "Grand Theft Auto")) %>% 
   ggplot(aes(x = reorder(Platform, -Global_Sales), y = Global_Sales, fill = Platform)) +
   geom_bar(stat = "identity", show.legend = FALSE) + xlab("Platform") + ylab("Global Sales") +
@@ -148,6 +148,24 @@ COD <- vgsales %>% filter(str_detect(vgsales$Name, c("Call of", "Call Of"))) %>%
   ggtitle("Call Of Duty") + coord_flip()
 
 ggarrange(GTA, FIFA, Pokemon, Mario, NFS, COD)
+```
+
+* The above barplot displays global sales on x-axis and platform of game on y-axis. We can get an overview of which franchise of games was sold on what platforms and also about the number of copies sold in millions. This can be compared side-by-side and it clearly shows which game was most popular on what platform.
+
+\newpage
+
+* The following graph shows a dot plot of two popular game franchises of UbiSoft namely, Assassin's Creed and Prince of Persia. It displays global sales on x-axis and game title on the y-axis. The different colors of dots account to the type of platform the game belonged to.
+
+```{r ACSales, fig.cap="Assassin's Creed and Prince of Persia Sales (millions)"}
+AC <- vgsales %>% filter(str_detect(vgsales$Name,("Assassin's"))) %>% 
+  ggplot(aes(Global_Sales, Name, color = Platform)) + geom_point() +
+  xlab("Global Sales") + ylab("Game")
+
+PoP <- vgsales %>% filter(str_detect(vgsales$Name,c("Prince of", "Prince Of"))) %>% 
+  ggplot(aes(Global_Sales, Name, color = Platform)) + geom_point() +
+  xlab("Global Sales") + ylab("Game")
+
+ggarrange(AC, PoP, ncol = 1)
 ```
 
 
