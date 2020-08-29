@@ -202,7 +202,7 @@ ggarrange(GTA, FIFA, Pokemon, Mario, NFS, COD)
 \newpage
 ### UbiSoft Franchises:
 
-* The following graph shows a dot plot of two popular game franchises of UbiSoft namely, Assassin's Creed and Prince of Persia. It displays global sales on x-axis and game title on the y-axis. The different colors of dots account to the type of platform the game belonged to.
+* The following graph shows a dot plot of two popular game franchises of UbiSoft namely, **Assassin's Creed and Prince of Persia**. It displays global sales on x-axis and game title on the y-axis. The different colors of dots account to the type of platform the game belonged to.
 
 ```{r ACSales, fig.cap="Assassin's Creed and Prince of Persia Sales (millions)"}
 AC <- vgsales %>% filter(str_detect(vgsales$Name,("Assassin's"))) %>% 
