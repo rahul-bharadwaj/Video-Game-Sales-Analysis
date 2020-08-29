@@ -3,12 +3,12 @@ title: "Video Game Sales"
 author: "Rahul Bharadwaj Mysore Venkatesh"
 date: "23/08/2020"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
+knitr::opts_chunk$set(echo = FALSE,
                       message = FALSE,
                       warning = FALSE,
                       fig.pos = 'H',
@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE,
 ```
 
 * We first load the libraries required for our analysis.
-```{r Library}
+```{r Library, echo = TRUE}
 #loading libraries
 library(tidyverse)
 library(visdat)
@@ -26,7 +26,7 @@ library(ggpubr)
 
 * We now read our data into R environment from a [source file](https://www.kaggle.com/gregorut/videogamesales)
 
-```{r ReadData}
+```{r ReadData, echo = TRUE}
 #reading video games sales data from csv file
 vgsales <- read.csv("vgsales.csv")
 #displaying dimensions of data and sample observations
@@ -48,7 +48,7 @@ glimpse(vgsales)
 
 1. The visdat package in R helps us get a visual overview of the data in the form of plots. The vis_dat() function helps us get a glimpse of the data types for all variables in our dataset.
 
-```{r visdat, fig.cap='Visulaization of Data Types of the data', fig.height = 2, fig.width = 4}
+```{r visdat, echo = TRUE, fig.cap='Visulaization of Data Types of the data', fig.height = 2, fig.width = 4}
 #Initial Data Analysis to get a feel of the dataset
 visdat::vis_dat(vgsales)
 ```
@@ -58,7 +58,7 @@ visdat::vis_dat(vgsales)
 
 2. The vis_guess() function tries to predict the kind of data in each cell of our dataset.
 
-```{r visguess, fig.cap='Data Type for each cell in dataset', fig.height = 3, fig.width = 4}
+```{r visguess, echo = TRUE, fig.cap='Data Type for each cell in dataset', fig.height = 3, fig.width = 4}
 #cell data type guess
 visdat::vis_guess(vgsales)
 ```
@@ -76,7 +76,7 @@ visdat::vis_guess(vgsales)
 
 3. The vis_miss() function give an overall visual of the missing data in our data set.
 
-```{r vismiss, fig.cap='Missing Values Plot', fig.height = 5, fig.width = 5}
+```{r vismiss, echo = TRUE, fig.cap='Missing Values Plot', fig.height = 5, fig.width = 5}
 #NA or missing values viz
 visdat::vis_miss(vgsales)
 ```
@@ -87,7 +87,7 @@ visdat::vis_miss(vgsales)
 
 4. The vis_cor() function gives us a visual plot of the correlation between variables in our dataset. An important thing to note here is that it takes only numeric variables. We have already established this, thanks to vis_dat(). So we select only the numeric columns for this function.
 
-```{r viscor, fig.cap='Correlation Plot for variables', fig.height = 3, fig.width = 5}
+```{r viscor, echo = TRUE, fig.cap='Correlation Plot for variables', fig.height = 3, fig.width = 5}
 #visual correlation for numerical variables
 visdat::vis_cor(vgsales[7:11])
 ```
@@ -96,7 +96,7 @@ visdat::vis_cor(vgsales[7:11])
 ### gathercor
 
 5. The gather_cor() function gives us the exact values for the same instead of a range.
-```{r gathercor, fig.cap='Correlation between variables'}
+```{r gathercor, echo = TRUE, fig.cap='Correlation between variables'}
 #tabular correlation for numerical variables
 visdat::gather_cor(vgsales[7:11]) %>% filter(row_1 == "Global_Sales") %>% head(5) %>%
   kable() %>% kable_styling(full_width = FALSE)
@@ -110,13 +110,58 @@ visdat::gather_cor(vgsales[7:11]) %>% filter(row_1 == "Global_Sales") %>% head(5
 
 * In statistics, exploratory data analysis is an approach to analyzing data sets to summarize their main characteristics, often with visual methods. A statistical model can be used or not, but primarily EDA is for seeing what the data can tell us beyond the formal modeling or hypothesis testing task [(Wikipedia)](https://en.wikipedia.org/wiki/Exploratory_data_analysis)
 
-Example Code:
-GTA <- vgsales %>% filter(str_detect(vgsales$Name, "Grand Theft Auto")) %>% 
-  ggplot(aes(x = reorder(Platform, -Global_Sales), y = Global_Sales, fill = Platform)) +
-  geom_bar(stat = "identity", show.legend = FALSE) + xlab("Platform") + ylab("Global Sales") +
-  ggtitle("Grand Theft Auto: All-Time Sales") + coord_flip()
+### Regional Sales:
 
-```{r AllTimeSales, fig.cap='All Time Global Sales (millions)'}
+* Let us consider the Correlation between sales in different regions and global sales as mentioned in the previous table. We plot with Regional Sales on x-axis and Global Sales on y-axis and check how each regional sales drive global sales.
+
+```{r RegionSmooth, fig.cap='Smoothened curves for Regional Sales and Global Sales', fig.height = 2, fig.width = 4}
+NAS <- vgsales %>% ggplot(aes(x = NA_Sales, y = Global_Sales)) + geom_point() +
+  geom_smooth() + xlab("North America Sales") + ylab("Global Sales")
+
+EUS <- vgsales %>% ggplot(aes(x = EU_Sales, y = Global_Sales)) + geom_point() +
+  geom_smooth() + xlab("Europe Sales") + ylab("Global Sales")
+
+JPS <- vgsales %>% ggplot(aes(x = JP_Sales, y = Global_Sales)) + geom_point() +
+  geom_smooth() + xlab("Japan Sales") + ylab("Global Sales")
+
+ORS <- vgsales %>% ggplot(aes(x = Other_Sales, y = Global_Sales)) + geom_point() +
+  geom_smooth() + xlab("Other Region Sales") + ylab("Global Sales")
+
+ggarrange(NAS, EUS, JPS,ORS)
+```
+  
+* The above plot is smoothened curve of all the observations and how the tend to change.
+
+* The following correlation displays the above table as a plot with all the exact values.
+
+```{r RegionCor, fig.cap='A plot of Correlation between Regional Sales and Global Sales', fig.height = 3, fig.width = 5}
+NASCor <- ggscatter(vgsales, x = "NA_Sales", y = "Global_Sales", 
+          add = "reg.line", cor.coef = TRUE, cor.method = "pearson",
+          xlab = "North America Sales", ylab = "Global Sales")
+
+EUSCor <- ggscatter(vgsales, x = "EU_Sales", y = "Global_Sales", 
+          add = "reg.line", cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Europe Sales", ylab = "Global Sales")
+
+JPSCor <- ggscatter(vgsales, x = "JP_Sales", y = "Global_Sales", 
+          add = "reg.line", cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Japan Sales", ylab = "Global Sales")
+
+ORSCor <- ggscatter(vgsales, x = "Other_Sales", y = "Global_Sales", 
+          add = "reg.line", cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Other Region Sales", ylab = "Global Sales")
+
+ggarrange(NASCor, EUSCor, JPSCor, ORSCor)
+```
+
+* We can observe that most of the global sales share is from North America and Europe. Other regions of the world has a lesser share and Japan has the least share of global sales.
+
+\newpage
+### Famous Gaming Franchises:
+
+* Let us consider some of the most famous game franchises and check what franchise sold most on what gaming platform. The considered franchises are Grand Theft Auto, FIFA, Pokemon, Mario, Need for Speed, and Call of Duty.
+
+```{r AllTimeSales, fig.cap='All Time Global Sales (millions)', fig.width=5, fig.height=5}
 GTA <- vgsales %>% filter(str_detect(vgsales$Name, "Grand Theft Auto")) %>% 
   ggplot(aes(x = reorder(Platform, -Global_Sales), y = Global_Sales, fill = Platform)) +
   geom_bar(stat = "identity", show.legend = FALSE) + xlab("Platform") + ylab("Global Sales") +
@@ -152,20 +197,114 @@ ggarrange(GTA, FIFA, Pokemon, Mario, NFS, COD)
 
 * The above barplot displays global sales on x-axis and platform of game on y-axis. We can get an overview of which franchise of games was sold on what platforms and also about the number of copies sold in millions. This can be compared side-by-side and it clearly shows which game was most popular on what platform.
 
+* Notice that the scales are different for each franchise and **Mario has sold the most with more than 100 million copies** while **Need For Speed has sold a little over 15 million only.**
+
 \newpage
+### UbiSoft Franchises:
 
 * The following graph shows a dot plot of two popular game franchises of UbiSoft namely, Assassin's Creed and Prince of Persia. It displays global sales on x-axis and game title on the y-axis. The different colors of dots account to the type of platform the game belonged to.
 
 ```{r ACSales, fig.cap="Assassin's Creed and Prince of Persia Sales (millions)"}
 AC <- vgsales %>% filter(str_detect(vgsales$Name,("Assassin's"))) %>% 
   ggplot(aes(Global_Sales, Name, color = Platform)) + geom_point() +
-  xlab("Global Sales") + ylab("Game")
+  xlab("Global Sales") + ylab("Game") + xlim(0, 7)
 
 PoP <- vgsales %>% filter(str_detect(vgsales$Name,c("Prince of", "Prince Of"))) %>% 
   ggplot(aes(Global_Sales, Name, color = Platform)) + geom_point() +
-  xlab("Global Sales") + ylab("Game")
+  xlab("Global Sales") + ylab("Game") + xlim(0, 7)
 
 ggarrange(AC, PoP, ncol = 1)
 ```
 
+* We can observe that there were **lesser PoP titles released compared to AC titles**. Also, only two games from the PoP franchise crossed sales of 1.5 million. On the other hand, AC has sold more than 2 million copies of most of their titles.
 
+* This might explain why there are lesser games in PoP franchise compared to AC. UbiSoft slowly shifted their focus on the franchise that was more popular among gaming fans.
+
+\newpage
+### Publisher Performances:
+
+* The following table shows a summary of the **EA games Global Sales.**
+
+```{r EASummary}
+vgsales %>% filter(str_detect(vgsales$Publisher, "Electronic Arts")) %>%
+  summarise(TotalTitles = n(),
+            TotalCopiesSold = sum(Global_Sales),
+            MeanGS = mean(Global_Sales),
+            MedianGS = median(Global_Sales),
+            MaxSold = max(Global_Sales),
+            MinSold = min(Global_Sales)) %>% kable() %>%  kable_styling(full_width = FALSE)
+```
+
+```{r EAPlot}
+EADensity <- vgsales %>% filter(str_detect(vgsales$Publisher, "Electronic Arts")) %>%
+  ggplot(aes(x = Global_Sales, y = ..density..)) +
+  geom_density(fill = "skyblue") + geom_vline(xintercept = mean(vgsales$Global_Sales),
+  colour = "blue") + xlab("EA Games GlobalSales") + ylab("Density")
+```
+
+* The following table shows a summary of the **Activision games Global Sales.**
+
+```{r ActivisionSummary}
+vgsales %>% filter(str_detect(vgsales$Publisher, "Activision")) %>%
+  summarise(TotalTitles = n(),
+            TotalCopiesSold = sum(Global_Sales),
+            MeanGS = mean(Global_Sales),
+            MedianGS = median(Global_Sales),
+            MaxSold = max(Global_Sales),
+            MinSold = min(Global_Sales)) %>% kable() %>%  kable_styling(full_width = FALSE)
+```
+
+```{r ActivisionPlot}
+ActivisionDensity <- vgsales %>% filter(str_detect(vgsales$Publisher, "Activision")) %>%
+  ggplot(aes(x = Global_Sales, y = ..density..)) +
+  geom_density(fill = "gold") + geom_vline(xintercept = mean(vgsales$Global_Sales),
+  colour = "orange4") + xlab("Activision Games GlobalSales") + ylab("Density")
+```
+
+* The following table shows a summary of the **UbiSoft games Global Sales.**
+
+```{r UbiSoftSummary}
+vgsales %>% filter(str_detect(vgsales$Publisher, "Ubisoft")) %>%
+  summarise(TotalTitles = n(),
+            TotalCopiesSold = sum(Global_Sales),
+            MeanGS = mean(Global_Sales),
+            MedianGS = median(Global_Sales),
+            MaxSold = max(Global_Sales),
+            MinSold = min(Global_Sales)) %>% kable() %>%  kable_styling(full_width = FALSE)
+```
+
+```{r UbisoftPlot}
+UbiSoftDensity <- vgsales %>% filter(str_detect(vgsales$Publisher, "Ubisoft")) %>%
+  ggplot(aes(x = Global_Sales, y = ..density..)) +
+  geom_density(fill = "greenyellow") + geom_vline(xintercept = mean(vgsales$Global_Sales),
+  colour = "green4") + xlab("Ubisoft Games GlobalSales") + ylab("Density")
+```
+
+* The following table shows a summary of the **Sony games Global Sales.**
+
+```{r SonySummary}
+vgsales %>% filter(str_detect(vgsales$Publisher, "Sony Computer Entertainment")) %>%
+  summarise(TotalTitles = n(),
+            TotalCopiesSold = sum(Global_Sales),
+            MeanGS = mean(Global_Sales),
+            MedianGS = median(Global_Sales),
+            MaxSold = max(Global_Sales),
+            MinSold = min(Global_Sales)) %>% kable() %>%  kable_styling(full_width = FALSE)
+```
+
+```{r SonyPlot}
+SonyDensity <- vgsales %>% filter(str_detect(vgsales$Publisher, "Sony Computer Entertainment")) %>%
+  ggplot(aes(x = Global_Sales, y = ..density..)) +
+  geom_density(fill = "indianred1") + geom_vline(xintercept = mean(vgsales$Global_Sales),
+  colour = "red4") + xlab("Sony Games GlobalSales") + ylab("Density")
+```
+
+**Publisher Global Sales Comparison -**
+
+```{r DensityPlots}
+ggarrange(EADensity,ActivisionDensity, UbiSoftDensity, SonyDensity, ncol = 1)
+```
+
+## References -
+
+* 
