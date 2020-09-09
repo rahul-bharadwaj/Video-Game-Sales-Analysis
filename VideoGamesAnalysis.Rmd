@@ -59,6 +59,7 @@ visdat::vis_dat(vgsales)
 ```
 * We can observe that there are only three Types of data in our dataset viz, character, integer, and numeric. This makes it pretty straightforward and simple to conduct analysis.
 
+\newpage
 ### visguess
 
 2. The vis_guess() function tries to predict the kind of data in each cell of our dataset.
@@ -77,6 +78,7 @@ visdat::vis_guess(vgsales)
   + The rest of the sales variables are either integer or double.  
 * Note that this is a cell-wise interpretation and the actual data will have only one type for one column.
 
+\newpage
 ### vismiss
 
 3. The vis_miss() function give an overall visual of the missing data in our data set.
@@ -88,6 +90,7 @@ visdat::vis_miss(vgsales)
   
 * We can observe that there is no missing values in our data. Present 100% indicates the same. This means we do not have to deal with missing values.
 
+\newpage
 ### viscor
 
 4. The vis_cor() function gives us a visual plot of the correlation between variables in our dataset. An important thing to note here is that it takes only numeric variables. We have already established this, thanks to vis_dat(). So we select only the numeric columns for this function.
@@ -139,6 +142,7 @@ ggarrange(NAS, EUS, JPS,ORS)
   
 * The above plot is a smoothened curve of all the observations and how the tend to change.
 
+\newpage
 * The following correlation displays the above table as a plot with all the exact values.
 
 ```{r RegionCor, fig.cap='A plot of Correlation between Regional Sales and Global Sales'}
@@ -316,6 +320,7 @@ SonyDensity <- vgsales %>% filter(str_detect(vgsales$Publisher, "Sony Computer E
   colour = "red4") + xlab("Sony Games GlobalSales") + ylab("Density") + xlim(0, 15)
 ```
 
+\newpage
 **Publisher Global Sales Comparison -**
 
 * This density plot helps us get an understanding as to which publisher sold how many copies.
@@ -328,6 +333,7 @@ ggarrange(EADensity,ActivisionDensity, UbiSoftDensity, SonyDensity, ncol = 1)
 
 * With different questions asked, the answer is different. And it is debatable as to who was best.
 
+\newpage
 # **Conclusion -**
 
 * This is just the start of answering questions about the data. There can be numerous questions asked and appropriate analysis conducted with suitable visual representations that can effectively answer the questions.
